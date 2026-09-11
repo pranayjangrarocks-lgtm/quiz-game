@@ -24,8 +24,13 @@ function adminRoom(code) {
 
 function initGameSocket(server) {
   const io = new Server(server, {
-    cors: { origin: clientOrigin, methods: ['GET', 'POST'] },
+  cors: { 
+    origin: ["https://vercel.app", "http://localhost:5173"], 
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
   });
+
 
   io.on('connection', (socket) => {
     socket.on('join_game', async ({ code, name }, cb) => {
