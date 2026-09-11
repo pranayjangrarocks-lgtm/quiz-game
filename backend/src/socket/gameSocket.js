@@ -25,7 +25,11 @@ function adminRoom(code) {
 function initGameSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: ["https://quiz-game-mu-nine.vercel.app", "http://localhost:5173"],
+      origin: [
+        "https://quiz-game-mu-nine.vercel.app",
+        "https://quiz-game-git-main-pranayjangrarocks-lgtm.vercel.app",
+        "http://localhost:5173"
+      ],
       methods: ['GET', 'POST'],
       credentials: true
     },

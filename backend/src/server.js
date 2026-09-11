@@ -12,7 +12,11 @@ const gameRoutes = require('./modules/game/game.routes');
 
 const app = express();
 app.use(cors({
-  origin: ["https://quiz-game-mu-nine.vercel.app", "http://localhost:5173"],
+  origin: [
+    "https://quiz-game-mu-nine.vercel.app",
+    "https://quiz-game-git-main-pranayjangrarocks-lgtm.vercel.app",
+    "http://localhost:5173"
+  ],
   credentials: true
 }));
 app.use(express.json());
