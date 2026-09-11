@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Quiz {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  createdAt   DateTime   @default(now())
+  questions   Question[]
+  games       Game[]
+}
+
+model Question {
+  id         String   @id @default(cuid())
+  quizId     String
+  quiz       Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  order      Int
+  youtubeUrl String
+  startTime  Int      @default(0) // seconds into the video where the clip starts
+  duration   Int      @default(20) // seconds the clip plays / time allowed to answer
+  answer     String // correct song name (accepted answer)
+  altAnswers String[] @default([]) // alternate accepted spellings / titles
+  points     Int      @default(1000)
+  answers    Answer[]
+
+  @@index([quizId])
+}
+
+enum GameStatus {
+  WAITING
+  ACTIVE
+  FINISHED
+}
+
+model Game {
+  id           String        @id @default(cuid())
+  code         String        @unique
+  quizId       String
+  quiz         Quiz          @relation(fields: [quizId], references: [id])
+  status       GameStatus    @default(WAITING)
+  currentIndex Int           @default(-1)
+  createdAt    DateTime      @default(now())
+  participants Participant[]
+}
+
+model Participant {
+  id       String   @id @default(cuid())
+  gameId   String
+  game     Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  name     String
+  socketId String?
+  score    Int      @default(0)
+  joinedAt DateTime @default(now())
+  answers  Answer[]
+
+  @@unique([gameId, name])
+}
+
+model Answer {
+  id            String      @id @default(cuid())
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerText    String
+  isCorrect     Boolean
+  timeTakenMs   Int
+  pointsAwarded Int
+  createdAt     DateTime    @default(now())
+
+  @@unique([participantId, questionId])
+}
